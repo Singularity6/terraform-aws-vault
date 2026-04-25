@@ -110,15 +110,15 @@ module "consul_iam_policies_servers" {
 # This script will configure and start Vault
 # ---------------------------------------------------------------------------------------------------------------------
 
-data "template_file" "user_data_vault_cluster" {
-  template = file("${path.module}/examples/root-example/user-data-vault.sh")
-
-  vars = {
-    aws_region               = data.aws_region.current.region
-    consul_cluster_tag_key   = var.consul_cluster_tag_key
-    consul_cluster_tag_value = var.consul_cluster_name
-  }
-}
+# data "template_file" "user_data_vault_cluster" {
+#   template = file("${path.module}/examples/root-example/user-data-vault.sh")
+#
+#   vars = {
+#     aws_region               = data.aws_region.current.region
+#     consul_cluster_tag_key   = var.consul_cluster_tag_key
+#     consul_cluster_tag_value = var.consul_cluster_name
+#   }
+# }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # PERMIT CONSUL SPECIFIC TRAFFIC IN VAULT CLUSTER
@@ -219,7 +219,7 @@ module "consul_cluster" {
 
 # data "template_file" "user_data_consul" {
 #   template = file("${path.module}/examples/root-example/user-data-consul.sh")
-
+#
 #   vars = {
 #     consul_cluster_tag_key   = var.consul_cluster_tag_key
 #     consul_cluster_tag_value = var.consul_cluster_name
