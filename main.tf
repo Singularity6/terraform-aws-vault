@@ -66,7 +66,15 @@ module "vault_cluster" {
   instance_type = var.vault_instance_type
 
   ami_id    = var.ami_id == null ? data.aws_ami.vault_consul.image_id : var.ami_id
-  user_data = data.template_file.user_data_vault_cluster.rendered
+  # user_data = data.template_file.user_data_vault_cluster.rendered
+  user_data = templatefile(
+    "${path.module}/examples/root-example/user-data-vault.sh",
+    {
+      aws_region               = data.aws_region.current.region,
+      consul_cluster_tag_key   = var.consul_cluster_tag_key,
+      consul_cluster_tag_value = var.consul_cluster_name
+    }
+  )
 
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnet_ids.default.ids
@@ -106,7 +114,7 @@ data "template_file" "user_data_vault_cluster" {
   template = file("${path.module}/examples/root-example/user-data-vault.sh")
 
   vars = {
-    aws_region               = data.aws_region.current.name
+    aws_region               = data.aws_region.current.region
     consul_cluster_tag_key   = var.consul_cluster_tag_key
     consul_cluster_tag_value = var.consul_cluster_name
   }
@@ -183,7 +191,15 @@ module "consul_cluster" {
   cluster_tag_value = var.consul_cluster_name
 
   ami_id    = var.ami_id == null ? data.aws_ami.vault_consul.image_id : var.ami_id
-  user_data = data.template_file.user_data_consul.rendered
+  # user_data = data.template_file.user_data_consul.rendered
+  user_data = templatefile(   
+    "${path.module}/examples/root-example/user-data-consul.sh",
+    {
+     consul_cluster_tag_key   = var.consul_cluster_tag_key
+     consul_cluster_tag_value = var.consul_cluster_name
+   }
+  )
+
 
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnet_ids.default.ids
@@ -201,14 +217,14 @@ module "consul_cluster" {
 # This script will configure and start Consul
 # ---------------------------------------------------------------------------------------------------------------------
 
-data "template_file" "user_data_consul" {
-  template = file("${path.module}/examples/root-example/user-data-consul.sh")
+# data "template_file" "user_data_consul" {
+#   template = file("${path.module}/examples/root-example/user-data-consul.sh")
 
-  vars = {
-    consul_cluster_tag_key   = var.consul_cluster_tag_key
-    consul_cluster_tag_value = var.consul_cluster_name
-  }
-}
+#   vars = {
+#     consul_cluster_tag_key   = var.consul_cluster_tag_key
+#     consul_cluster_tag_value = var.consul_cluster_name
+#   }
+# }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY THE CLUSTERS IN THE DEFAULT VPC AND AVAILABILITY ZONES
